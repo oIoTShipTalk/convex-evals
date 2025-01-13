@@ -7,7 +7,7 @@ import { join } from "path";
 import { generateTest } from "./generate.js";
 import { setupJs, lintJs, typecheckJs } from "./typescript.js";
 import { deploy } from "./convex_backend.js";
-import { readdirSync, rmSync } from "fs";
+import { readdirSync, rmSync, statSync } from "fs";
 
 config();
 
@@ -54,21 +54,20 @@ async function main() {
 
   const testFilter = options.testFilter ? new RegExp(options.testFilter) : null;
 
-  const tests = readdirSync(evalsDir)
-    .filter((category) => {
-      try {
-        return readdirSync(join(evalsDir, category))
-          .filter((test) => {
-            const testPath = join(evalsDir, category, test);
-            return !testFilter || testFilter.test(test);
-          })
-          .map((test) => [category, test] as [string, string]);
-      } catch {
-        return [];
-      }
-    })
-    .flat()
-    .sort();
+  // Get all test directories
+  const tests: [string, string][] = [];
+  for (const category of readdirSync(evalsDir)) {
+    const categoryPath = join(evalsDir, category);
+    if (!statSync(categoryPath).isDirectory()) continue;
+
+    for (const test of readdirSync(categoryPath)) {
+      const testPath = join(categoryPath, test);
+      if (!statSync(testPath).isDirectory()) continue;
+      if (testFilter && !testFilter.test(test)) continue;
+      tests.push([category, test]);
+    }
+  }
+  tests.sort();
 
   if (doGeneration) {
     if (options.force) {
@@ -81,15 +80,16 @@ async function main() {
 
     const promises = tests.map(async ([category, test]) => {
       const testDir = join(evalsDir, category, test);
-      console.log(`Generating ${testDir}...`);
+      const testOutputDir = join(outputDir, "evals", category, test);
+      console.log(`Generating ${category}/${test}...`);
       try {
         await generateTest({
           inputDir: testDir,
-          outputRoot: outputDir,
+          outputRoot: testOutputDir,
           client,
         });
       } catch (e) {
-        console.error(`Error generating ${testDir}: ${e}`);
+        console.error(`Error generating ${category}/${test}: ${e}`);
         throw e;
       }
     });
