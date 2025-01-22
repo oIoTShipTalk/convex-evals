@@ -26,9 +26,8 @@ If you'd like to grade the evaluations again without regenerating them, run:
 pdm run python runner/main.py --skip-generation
 ```
 
-Grading writes out a JSON report in the output directory.
+Here is the Next app for viewing the report:
 
-There's also a Next app for viewing the report:
 ```
 cd viewer
 bun install
