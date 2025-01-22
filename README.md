@@ -28,13 +28,6 @@ pdm run python runner/main.py --skip-generation
 
 Grading writes out a JSON report in the output directory.
 
-You can also pretty print the report:
-
-```
-pdm run python runner/main.py --output-dir=output
-pdm run python print_report.py output/report.json
-```
-
 There's also a Next app for viewing the report:
 ```
 cd viewer

@@ -1,0 +1,18 @@
+Write this schema to `convex/schema.ts`:
+```
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    age: v.number(),
+  }).index("by_email", ["email"]),
+});
+```
+
+Write a mutation named `deleteUserById` in `convex/index.ts` that:
+- Takes an id as an argument
+- Efficiently deletes the document
+- Returns null
