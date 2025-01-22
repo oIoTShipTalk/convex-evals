@@ -1,0 +1,18 @@
+Write this schema to `convex/schema.ts`:
+```
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    age: v.number(),
+  }).index("by_email", ["email"]),
+});
+```
+
+Write a mutation named `insertUser` in `convex/index.ts` that:
+- Takes a user object as an argument
+- Inserts the user into the "users" table
+- Returns the _id field of the inserted document
