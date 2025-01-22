@@ -21,7 +21,7 @@ export const adminClient = new ConvexClient(`http://0.0.0.0:${port}`);
 const answerAdminClient = new ConvexClient(`http://0.0.0.0:${answerPort}`);
 (answerAdminClient as any).setAdminAuth(adminKey);
 
-export async function getSchema(expected: any) {
+export async function getSchema(adminClient: any) {
   const result = await adminClient.query("_system/frontend/getSchemas" as any, {
     componentId: null,
   });
@@ -30,21 +30,21 @@ export async function getSchema(expected: any) {
   }
   const schema = JSON.parse(result.active);
   schema.tables.sort((a: any, b: any) =>
-    a.tableName.localeCompare(b.tableName),
+    a.tableName.localeCompare(b.tableName)
   );
   return schema;
 }
 
 export async function compareSchema() {
-  const generatedSchema = await getSchema(null);
-  const answerSchema = await getSchema(null);
+  const generatedSchema = await getSchema(adminClient);
+  const answerSchema = await getSchema(answerAdminClient);
   expect(generatedSchema).toEqual(answerSchema);
 }
 
 async function getFunctionSpec(adminClient: any) {
   const result = await adminClient.query(
     "_system/cli/modules:apiSpec" as any,
-    {},
+    {}
   );
   return result;
 }
