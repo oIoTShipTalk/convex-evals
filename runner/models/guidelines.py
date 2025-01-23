@@ -192,6 +192,14 @@ CONVEX_GUIDELINES = GuidelineSection(
             ],
         ),
         GuidelineSection(
+            "full_text_search_guidelines",
+            [
+                Guideline(
+                    "A query for \"10 messages in channel '#general' that best match the query 'hello hi' in their body\" would look like:\n\nconst messages = await ctx.db\n  .query(\"messages\")\n  .withSearchIndex(\"search_body\", (q) =>\n    q.search(\"body\", \"hello hi\").eq(\"channel\", \"#general\"),\n  )\n  .take(10);"
+                ),                            
+            ],
+        ),
+        GuidelineSection(
             "query_guidelines",
             [
                 Guideline(
