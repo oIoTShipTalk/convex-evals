@@ -190,4 +190,29 @@ if __name__ == "__main__":
             json.dump(report, f)
 
         if any_failed:
-            raise Exception("Evaluation failed.")
+            failed_tests = []
+            for r in report:
+                category = r['category']
+                test = r['test']
+                failures = []
+                
+                for k, v in r.items():
+                    if k not in ['category', 'test'] and isinstance(v, dict):
+                        if v.get('status') not in ['ok', 'skipped']:
+                            if 'error' in v and isinstance(v['error'], list):
+                                # For typescript errors, just show count
+                                failures.append(f"{k} failed ({len(v['error'])} errors)")
+                            elif 'error' in v and isinstance(v['error'], dict) and 'testResults' in v['error']:
+                                # For test failures, show failed test names
+                                failed_tests_count = v['error'].get('numFailedTests', 0)
+                                failures.append(f"{k} failed ({failed_tests_count} tests)")
+                            elif 'error' in v:
+                                failures.append(f"{k} failed")
+                            else:
+                                failures.append(f"{k} failed")
+                
+                if failures:
+                    failed_tests.append(f"{category}/{test}: {', '.join(failures)}")
+            
+            error_msg = "Evaluation failed:\n" + "\n".join(failed_tests)
+            raise Exception(error_msg)
