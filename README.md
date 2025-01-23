@@ -7,7 +7,7 @@ LLM's output.
 
 ## Running the evaluations
 
-```
+```bash
 pip install pdm
 pdm install
 
@@ -21,19 +21,19 @@ pdm run python runner/main.py --model=claude-3-5-sonnet-latest --generate-concur
 ```
 
 You can also specify a test filter regex:
-```
+```bash
 pdm run python runner/main.py --model=claude-3-5-sonnet-latest --generate-concurrency=1 --test-filter='.*data_modeling.*'
 ```
 
 If you'd like to grade the evaluations again without regenerating them, run:
 
-```
+```bash
 pdm run python runner/main.py --skip-generation
 ```
 
 Here is the Next app for viewing the report:
 
-```
+```bash
 cd viewer
 bun install
 bun dev
@@ -41,13 +41,13 @@ bun dev
 
 ## Creating a new evaluation
 
-```
+```bash
 pdm run python create_eval.py <name> <category>
 ```
 
 For example, adding a new fundmentals eval for using HTTP actions and storage would be:
 
-```
+```bash
 pdm run python create_eval.py http_actions_file_storage 000-fundamentals
 ```
 
