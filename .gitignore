@@ -182,3 +182,4 @@ evals/**/backend
 __pycache__/
 convex-local-backend
 
+.pdm-python
