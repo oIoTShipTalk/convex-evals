@@ -9,7 +9,7 @@ import functools
 import contextlib
 import zipfile
 import json
-from errors import VerificationError
+from runner.errors import VerificationError
 
 port_lock = threading.Lock()
 
