@@ -216,7 +216,7 @@ CONVEX_GUIDELINES = GuidelineSection(
                         ),
                         Guideline(
                             """Define crons by declaring the top-level `crons` object, calling some methods on it, and then exporting it as default. For example,
-                            ```
+                            ```ts
                             import { cronJobs } from "convex/server";
                             import { internal } from "./_generated/api";
 
@@ -231,6 +231,9 @@ CONVEX_GUIDELINES = GuidelineSection(
                         ),
                         Guideline(
                             "You can register Convex functions within `crons.ts` just like any other file."
+                        ),
+                        Guideline(
+                            "If the function that crons calls is internal you should remember to import the internal object from `_generated/api`."
                         ),
                     ],
                 ),
