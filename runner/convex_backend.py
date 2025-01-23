@@ -136,7 +136,7 @@ def download_convex_binary():
     latest = fetch_convex_release()
     version = latest["tag_name"]
 
-    arch = {"x86_64": "x86_64", "arm64": "aarch64"}[platform.machine()]
+    arch = {"x86_64": "x86_64", "arm64": "aarch64", "AMD64": "x86_64"}[platform.machine()]
     triple_os = {
         "Darwin": "apple-darwin",
         "Linux": "unknown-linux-gnu",
