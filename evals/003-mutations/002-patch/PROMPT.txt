@@ -1,0 +1,20 @@
+Write this schema to `convex/schema.ts`:
+```
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    age: v.number(),
+  }).index("by_email", ["email"]),
+});
+```
+
+Write a query named `updateUserEmail` in `convex/index.ts` that:
+- Takes an id and an email as arguments
+- Efficiently looks up the user
+- Throws an error if there is no user with that id
+- Patches the email with the new email
+- Returns null
