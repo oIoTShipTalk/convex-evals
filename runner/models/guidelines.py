@@ -190,19 +190,19 @@ CONVEX_GUIDELINES = GuidelineSection(
                     "Convex queries do NOT support `.delete()`. Instead, `.collect()` the results, iterate over them, and call `ctx.db.delete(row._id)` on each result."
                 ),
                 GuidelineSection(
-                "ordering",
-                [
-                    Guideline(
-                        "By default Convex always returns documents ordered by _creationTime."
-                    ), 
-                    Guideline(
-                        "You can use .order(`asc` | `desc`) to pick whether the order is ascending or descending. If the order isn't specified, it defaults to ascending."
-                    ), 
-                    Guideline(
-                        "Document queries that use indexes will be ordered based on the columns in the index and can avoid slow table scans."
-                    ),                  
-                ],
-            ),
+                    "ordering",
+                    [
+                        Guideline(
+                            "By default Convex always returns documents ordered by _creationTime."
+                        ), 
+                        Guideline(
+                            "You can use .order(`asc` | `desc`) to pick whether the order is ascending or descending. If the order isn't specified, it defaults to ascending."
+                        ), 
+                        Guideline(
+                            "Document queries that use indexes will be ordered based on the columns in the index and can avoid slow table scans."
+                        ),                  
+                    ],
+                ),
             ],
         ),
         GuidelineSection(
