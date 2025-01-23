@@ -132,6 +132,14 @@ if __name__ == "__main__":
         git_rev = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
         output_dir = f"output-{args.model}-{git_rev}"
 
+    if os.path.exists(output_dir) and not args.force:
+        response = input(f"Output directory '{output_dir}' already exists. Would you like to replace it? [y/N] ").strip()
+        if not response or response.lower() != 'y':
+            print("Aborting...")
+            sys.exit(1)
+        import shutil
+        shutil.rmtree(output_dir)
+        
     generate_concurrency = int(args.generate_concurrency)
     evaluate_concurrency = int(args.evaluate_concurrency)
     report_path = os.path.join(output_dir, "report.json")
