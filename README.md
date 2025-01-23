@@ -52,3 +52,7 @@ pdm run python create_eval.py http_actions_file_storage 000-fundamentals
 ```
 
 Note that test or category names cannot contain dashes.
+
+# Outstanding Evals
+
++ [ordering](https://docs.convex.dev/database/reading-data#ordering)

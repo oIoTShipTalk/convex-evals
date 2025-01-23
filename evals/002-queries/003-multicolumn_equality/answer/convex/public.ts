@@ -23,7 +23,6 @@ export const getProjectTasksByStatus = query({
       .withIndex("by_project_status_priority", (q) =>
         q.eq("projectId", args.projectId).eq("status", args.status)
       )
-      .order("asc")
       .take(5);
   },
 });
