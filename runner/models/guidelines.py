@@ -233,7 +233,7 @@ CONVEX_GUIDELINES = GuidelineSection(
                             "You can register Convex functions within `crons.ts` just like any other file."
                         ),
                         Guideline(
-                            "If the function that crons calls is internal you should remember to import the internal object from `_generated/api`."
+                            "If the function that crons calls is internal even if its in the same file you should mport the internal object from `_generated/api`."
                         ),
                     ],
                 ),
