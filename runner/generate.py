@@ -6,10 +6,10 @@ from models import ConvexCodegenModel
 def generate(input_dir: str, output_dir: str, model: ConvexCodegenModel):
     start = time.time()
 
-    with open(f"{input_dir}/PROMPT.txt", "r") as f:
-        prompt = f.read()
+    with open(f"{input_dir}/TASK.txt", "r") as f:
+        task_description = f.read()
 
-    files = model.generate(prompt)
+    files = model.generate(task_description)
     generated = sum(len(content) for content in files.values())
 
     project_dir = os.path.abspath(os.path.join(output_dir, "project"))

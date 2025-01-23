@@ -44,7 +44,7 @@ class AnthropicModel(ConvexCodegenModel):
         return out
 
 
-def render_prompt(task_prompt: str):
+def render_prompt(task_description: str):
     yield "Your task is to generate a Convex backend from a task description.\n"
     yield """Before writing any code, analyze the task and think through your approach. Use <analysis> tags to show your thought process, covering the following areas:
 
@@ -68,7 +68,7 @@ After your analysis, generate the necessary files for a Convex backend that impl
     yield "Begin your response with your thought process, then proceed to generate the necessary files for the Convex backend.\n\n"
     yield "Now, implement a Convex backend that satisfies the following task description:\n"
     yield "<task_description>\n"
-    yield task_prompt
+    yield task_description
     yield "</task_description>\n\n"
 
 
@@ -79,7 +79,7 @@ def render_examples():
         if not os.path.isdir(example_path):
             continue
 
-        prompt = open(os.path.join(example_path, "PROMPT.txt"), "r").read()
+        task_description = open(os.path.join(example_path, "TASK.txt"), "r").read()
         analysis = open(os.path.join(example_path, "ANALYSIS.txt"), "r").read()
 
         file_paths = []
@@ -93,9 +93,9 @@ def render_examples():
         file_paths.sort(key=lambda x: (x.count("/"), x))
 
         yield f'<example name="{example}">\n'
-        yield f"  <prompt>\n"
-        yield f"    {prompt}\n"
-        yield f"  </prompt>\n"
+        yield f"  <task>\n"
+        yield f"    {task_description}\n"
+        yield f"  </task>\n"
         yield f"  <response>\n"
         yield f"    <analysis>\n"
         yield f"      {analysis}\n"

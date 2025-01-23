@@ -6,7 +6,7 @@ This document outlines the workflow and best practices for creating effective Co
 
 Each eval consists of:
 
-1. A `PROMPT.txt` that describes the task
+1. A `TASK.txt` that describes the task
 2. An `answer/` directory containing the reference solution
 3. Within `answer/convex/`:
    - `schema.ts` - The database schema
@@ -26,7 +26,7 @@ Each eval consists of:
 
 2. **Write the Prompt**
 
-   - Create detailed requirements in `PROMPT.txt`
+   - Create detailed requirements in `TASK.txt`
    - Include complete schema
    - Specify all function names and requirements
 

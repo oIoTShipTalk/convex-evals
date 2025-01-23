@@ -27,7 +27,7 @@ testdir_name = f"{next_id:03d}-{name}"
 testdir = os.path.join(category_dir, testdir_name)
 os.makedirs(testdir)
 
-with open(os.path.join(testdir, "PROMPT.txt"), "w") as f:
+with open(os.path.join(testdir, "TASK.txt"), "w") as f:
     f.write(f"Create a backend for a {name} system.")
 
 answer_dir = os.path.join(testdir, "answer")
