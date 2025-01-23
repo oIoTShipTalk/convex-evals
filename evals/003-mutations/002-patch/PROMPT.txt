@@ -12,7 +12,7 @@ export default defineSchema({
 });
 ```
 
-Write a query named `updateUserEmail` in `convex/index.ts` that:
+Write a mutation named `updateUserEmail` in `convex/index.ts` that:
 - Takes an id and an email as arguments
 - Efficiently looks up the user
 - Throws an error if there is no user with that id
