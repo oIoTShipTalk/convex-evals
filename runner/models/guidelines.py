@@ -181,6 +181,17 @@ CONVEX_GUIDELINES = GuidelineSection(
             ],
         ),
         GuidelineSection(
+            "typescript_guidelines",
+            [
+                Guideline(
+                    "You can use the helper typescript type 'Id' from the _generated/dataModel import to get the type of the id for a given table. For example if there is a table called 'users' you can use Id<'users'> to get the type of the id for that table."
+                ),
+                Guideline(
+                    "If you need to define a Record make sure that you correctly provide the type of the key and value in the type. For example a validator `v.record(v.id('users'), v.string())` would have the type `Record<Id<'users'>, string>`"
+                ),               
+            ],
+        ),
+        GuidelineSection(
             "query_guidelines",
             [
                 Guideline(
