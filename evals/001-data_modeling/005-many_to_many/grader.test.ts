@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import {
-  adminClient,
-  client,
+  responseAdminClient,
+  responseClient,
   compareSchema,
   compareFunctionSpec,
 } from "../../../grader";
