@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import {
-  adminClient,
-  client,
+  responseAdminClient,
+  responseClient,
   compareSchema,
   compareFunctionSpec,
 } from "../../../grader";
@@ -16,12 +16,12 @@ test("compare function spec", async () => {
 });
 
 test("empty public query", async () => {
-  const result = await client.query(anyApi.index.emptyPublicQuery, {});
+  const result = await responseClient.query(anyApi.index.emptyPublicQuery, {});
   expect(result).toBe(null);
 
   let error: any = undefined;
   try {
-    await client.query(anyApi.index.emptyPublicQuery, {
+    await responseClient.query(anyApi.index.emptyPublicQuery, {
       arg: "test",
     });
   } catch (e) {
@@ -32,7 +32,7 @@ test("empty public query", async () => {
 
   error = undefined;
   try {
-    await client.mutation(anyApi.index.emptyPublicQuery, {});
+    await responseClient.mutation(anyApi.index.emptyPublicQuery, {});
   } catch (e) {
     error = e;
   }
@@ -40,7 +40,7 @@ test("empty public query", async () => {
 
   error = undefined;
   try {
-    await client.action(anyApi.index.emptyPublicQuery, {});
+    await responseClient.action(anyApi.index.emptyPublicQuery, {});
   } catch (e) {
     error = e;
   }
@@ -48,12 +48,12 @@ test("empty public query", async () => {
 });
 
 test("empty public mutation", async () => {
-  const result = await client.mutation(anyApi.index.emptyPublicMutation, {});
+  const result = await responseClient.mutation(anyApi.index.emptyPublicMutation, {});
   expect(result).toBe(null);
 
   let error: any = undefined;
   try {
-    await client.mutation(anyApi.index.emptyPublicMutation, {
+    await responseClient.mutation(anyApi.index.emptyPublicMutation, {
       arg: "test",
     });
   } catch (e) {
@@ -64,7 +64,7 @@ test("empty public mutation", async () => {
 
   error = undefined;
   try {
-    await client.query(anyApi.index.emptyPublicMutation, {});
+    await responseClient.query(anyApi.index.emptyPublicMutation, {});
   } catch (e) {
     error = e;
   }
@@ -72,7 +72,7 @@ test("empty public mutation", async () => {
 
   error = undefined;
   try {
-    await client.action(anyApi.index.emptyPublicMutation, {});
+    await responseClient.action(anyApi.index.emptyPublicMutation, {});
   } catch (e) {
     error = e;
   }
@@ -80,12 +80,12 @@ test("empty public mutation", async () => {
 });
 
 test("empty public action", async () => {
-  const result = await client.action(anyApi.index.emptyPublicAction, {});
+  const result = await responseClient.action(anyApi.index.emptyPublicAction, {});
   expect(result).toBe(null);
 
   let error: any = undefined;
   try {
-    await client.action(anyApi.index.emptyPublicAction, {
+    await responseClient.action(anyApi.index.emptyPublicAction, {
       arg: "test",
     });
   } catch (e) {
@@ -96,7 +96,7 @@ test("empty public action", async () => {
 
   error = undefined;
   try {
-    await client.query(anyApi.index.emptyPublicAction, {});
+    await responseClient.query(anyApi.index.emptyPublicAction, {});
   } catch (e) {
     error = e;
   }
@@ -104,7 +104,7 @@ test("empty public action", async () => {
 
   error = undefined;
   try {
-    await client.mutation(anyApi.index.emptyPublicAction, {});
+    await responseClient.mutation(anyApi.index.emptyPublicAction, {});
   } catch (e) {
     error = e;
   }
@@ -114,28 +114,28 @@ test("empty public action", async () => {
 test("empty private query", async () => {
   let error: any = undefined;
   try {
-    await client.query(anyApi.index.emptyPrivateQuery, {});
+    await responseClient.query(anyApi.index.emptyPrivateQuery, {});
   } catch (e) {
     error = e;
   }
   expect(error).toBeDefined();
   expect(error.toString()).toContain("Could not find public function");
 
-  const result = await adminClient.query(anyApi.index.emptyPrivateQuery, {});
+  const result = await responseAdminClient.query(anyApi.index.emptyPrivateQuery, {});
   expect(result).toBe(null);
 });
 
 test("empty private mutation", async () => {
   let error: any = undefined;
   try {
-    await client.mutation(anyApi.index.emptyPrivateMutation, {});
+    await responseClient.mutation(anyApi.index.emptyPrivateMutation, {});
   } catch (e) {
     error = e;
   }
   expect(error).toBeDefined();
   expect(error.toString()).toContain("Could not find public function");
 
-  const result = await adminClient.mutation(
+  const result = await responseAdminClient.mutation(
     anyApi.index.emptyPrivateMutation,
     {},
   );
@@ -145,13 +145,13 @@ test("empty private mutation", async () => {
 test("empty private action", async () => {
   let error: any = undefined;
   try {
-    await client.action(anyApi.index.emptyPrivateAction, {});
+    await responseClient.action(anyApi.index.emptyPrivateAction, {});
   } catch (e) {
     error = e;
   }
   expect(error).toBeDefined();
   expect(error.toString()).toContain("Could not find public function");
 
-  const result = await adminClient.action(anyApi.index.emptyPrivateAction, {});
+  const result = await responseAdminClient.action(anyApi.index.emptyPrivateAction, {});
   expect(result).toBe(null);
 });
