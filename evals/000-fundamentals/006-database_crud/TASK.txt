@@ -33,11 +33,11 @@ Implement the following functions in `convex/public.ts`:
    - Returns null
 
 4. Create a mutation `patchLocation` that:
-   - Takes an ID and optional location fields (name, latitude, longitude)
-   - Updates only the provided fields
+   - Takes an ID and a new name
+   - Updates only the name field
    - Returns null
 
 5. Create a mutation `deleteLocation` that:
    - Takes a location ID
-   - Deletes the location from the database
+   - Deletes the location from the database, throwing an error if it doesn't exist
    - Returns null

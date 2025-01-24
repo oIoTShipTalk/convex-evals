@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalQuery } from "./_generated/server";
 
 export const createLocation = mutation({
   args: {
@@ -20,6 +20,8 @@ export const readLocation = query({
   returns: v.union(
     v.null(),
     v.object({
+      _id: v.id("locations"),
+      _creationTime: v.number(),
       name: v.string(),
       latitude: v.number(),
       longitude: v.number(),
@@ -54,16 +56,12 @@ export const updateLocation = mutation({
 export const patchLocation = mutation({
   args: {
     id: v.id("locations"),
-    name: v.optional(v.string()),
-    latitude: v.optional(v.number()),
-    longitude: v.optional(v.number()),
+    name: v.string(),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
       name: args.name,
-      latitude: args.latitude,
-      longitude: args.longitude,
     });
   },
 });
