@@ -9,6 +9,7 @@ from typescript import setup_js, lint_js, typecheck_js
 import concurrent.futures
 from errors import error_status, VerificationError
 import threading
+import tempfile
 
 # Use a lock for cleaner console output
 print_lock = threading.Lock()
@@ -63,83 +64,73 @@ def evaluate_answer(evals_dir: str, category: str, test: str, direct_output: boo
     }
 
     # Create a temporary project directory with the answer contents
-    project_dir = os.path.join(answer_dir, "project")
-    os.makedirs(project_dir, exist_ok=True)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        print(f"Using temp dir: {temp_dir}")
+        project_dir = os.path.join(temp_dir, "project")
+        os.makedirs(project_dir, exist_ok=True)
+        shutil.copytree(answer_dir, project_dir, dirs_exist_ok=True)
 
-    # Copy package.json and other files to project dir
-    for item in os.listdir(answer_dir):
-        if item != "project":
-            src = os.path.join(answer_dir, item)
-            dst = os.path.join(project_dir, item)
-            if os.path.isdir(src):
-                shutil.copytree(src, dst, dirs_exist_ok=True)
-            else:
-                shutil.copy2(src, dst)
+        # Ensure package.json exists
+        if not os.path.exists(os.path.join(project_dir, "package.json")):
+            with open(os.path.join(project_dir, "package.json"), "w") as f:
+                json.dump({
+                    "name": f"convex-eval-{category}-{test}",
+                    "private": True,
+                    "dependencies": {
+                        "convex": "^1.0.0"
+                    }
+                }, f)
 
-    # Ensure package.json exists
-    if not os.path.exists(os.path.join(project_dir, "package.json")):
-        with open(os.path.join(project_dir, "package.json"), "w") as f:
-            json.dump({
-                "name": f"convex-eval-{category}-{test}",
-                "private": True,
-                "dependencies": {
-                    "convex": "^1.0.0"
-                }
-            }, f)
-
-    try:
-        setup_js(answer_dir, direct_output)
-        report_entry["setup"] = {"status": "ok"}
-    except Exception as e:
-        print_status(f"Error setting up {category}/{test}: {e}")
-        report_entry["setup"] = {"status": "failed", "error": str(e)}
-        return report_entry, False
-
-    try:
-        typecheck_js(answer_dir, direct_output)
-        report_entry["typecheck"] = {"status": "ok"}
-    except Exception as e:
-        print_status(f"Error typechecking {category}/{test}: {e}")
-        report_entry["typecheck"] = error_status(e)
-
-    try:
-        lint_js(answer_dir, direct_output)
-        report_entry["lint"] = {"status": "ok"}
-    except Exception as e:
-        print_status(f"Error linting {category}/{test}: {e}")
-        report_entry["lint"] = error_status(e)
-
-    backend_dir = os.path.join(test_dir, "backend")
-    os.makedirs(backend_dir, exist_ok=True)
-
-    with convex_backend(backend_dir) as backend:
         try:
-            deploy(backend, answer_dir)
-            report_entry["deploy"] = {"status": "ok"}
+            setup_js(temp_dir, direct_output)
+            report_entry["setup"] = {"status": "ok"}
         except Exception as e:
-            print_status(f"Error deploying {category}/{test}: {e}")
-            report_entry["deploy"] = error_status(e)
+            print_status(f"Error setting up {category}/{test}: {e}")
+            report_entry["setup"] = {"status": "failed", "error": str(e)}
             return report_entry, False
 
-        test_file = os.path.abspath(os.path.join(test_dir, "grader.test.ts"))
-        if os.path.exists(test_file):
-            try:
-                # Pass the same backend for both since we're testing the answer against itself
-                run_tests(backend, backend, test_file, direct_output)
-                report_entry["tests"] = {"status": "ok"}
-            except Exception as e:
-                if not direct_output:
-                    print_status(f"Error running tests for {category}/{test}:")
-                    error_info = format_test_error(e)
-                    if "failures" in error_info:
-                        for failure in error_info["failures"]:
-                            print_status(f"  ❌ {failure}")
-                    report_entry["tests"] = error_info
-                else:
-                    raise
+        try:
+            typecheck_js(temp_dir, direct_output)
+            report_entry["typecheck"] = {"status": "ok"}
+        except Exception as e:
+            print_status(f"Error typechecking {category}/{test}: {e}")
+            report_entry["typecheck"] = error_status(e)
 
-    # Clean up the temporary project directory
-    shutil.rmtree(project_dir, ignore_errors=True)
+        try:
+            lint_js(temp_dir, direct_output)
+            report_entry["lint"] = {"status": "ok"}
+        except Exception as e:
+            print_status(f"Error linting {category}/{test}: {e}")
+            report_entry["lint"] = error_status(e)
+
+        backend_dir = os.path.join(temp_dir, "backend")
+        os.makedirs(backend_dir, exist_ok=True)
+
+        with convex_backend(backend_dir) as backend:
+            try:
+                deploy(backend, project_dir)
+                report_entry["deploy"] = {"status": "ok"}
+            except Exception as e:
+                print_status(f"Error deploying {category}/{test}: {e}")
+                report_entry["deploy"] = error_status(e)
+                return report_entry, False
+
+            test_file = os.path.abspath(os.path.join(test_dir, "grader.test.ts"))
+            if os.path.exists(test_file):
+                try:
+                    # Pass the same backend for both since we're testing the answer against itself
+                    run_tests(backend, backend, test_file, direct_output)
+                    report_entry["tests"] = {"status": "ok"}
+                except Exception as e:
+                    if not direct_output:
+                        print_status(f"Error running tests for {category}/{test}:")
+                        error_info = format_test_error(e)
+                        if "failures" in error_info:
+                            for failure in error_info["failures"]:
+                                print_status(f"  ❌ {failure}")
+                        report_entry["tests"] = error_info
+                    else:
+                        raise
 
     all_ok = all(v["status"] == "ok" for k, v in report_entry.items() if "status" in v)
     status = "✅" if all_ok else "❌"

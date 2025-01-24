@@ -27,7 +27,7 @@ export const searchArticles = query({
     return articles.map((article) => {
       let preview = article.content;
       if (preview.length > 100) {
-        preview = preview.slice(0, 100) + "...";
+        preview = preview.slice(0, 100);
       }
       return {
         title: article.title,

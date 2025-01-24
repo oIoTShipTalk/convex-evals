@@ -39,7 +39,7 @@ export async function getSchema(adminClient: any) {
  * Insert the given documents into a table.
  */
 export async function addDocuments(adminClient: any, table: string, documents: any[]): Promise<void> {
-  const result = await adminClient.query("_system/frontend/addDocument", {
+  const result = await adminClient.mutation("_system/frontend/addDocument", {
     table,
     documents,
   });

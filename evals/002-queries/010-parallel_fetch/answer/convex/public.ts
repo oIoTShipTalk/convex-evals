@@ -3,7 +3,7 @@ import { query } from "./_generated/server";
 
 export const getAuthorDashboard = query({
   args: { email: v.string() },
-  returns: v.object({
+  returns: v.union(v.null(), v.object({
     user: v.object({
       name: v.string(),
       email: v.string(),
@@ -20,14 +20,14 @@ export const getAuthorDashboard = query({
         }),
       }),
     ),
-  }),
+  })),
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .unique();
     if (!user) {
-      throw new Error("User not found");
+      return null;
     }
     const preferencesPromise = ctx.db
       .query("userPreferences")
@@ -43,7 +43,7 @@ export const getAuthorDashboard = query({
     const promises = [];
     for await (const post of postQuery) {
       numPosts++;
-      if (numPosts >= 15) {
+      if (numPosts > 15) {
         break;
       }
       const promise = async () => {

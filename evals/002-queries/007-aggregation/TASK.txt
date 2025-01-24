@@ -21,5 +21,5 @@ Write a query named `getCustomerStats` in `convex/public.ts` that:
   * totalSpent: sum of (quantity * pricePerUnit) for all orders
   * averageOrderValue: totalSpent / totalOrders
 - You can assume that the number of orders for each customer is small.
-- Handle the case where customer has no orders.
+- Handle the case where customer has no orders and returns zero for all fields.
 - Format monetary values appropriately (2 decimal places)
