@@ -36,11 +36,11 @@ export const callerMutation = mutation({
   args: {},
   returns: v.number(),
   handler: async (ctx, args) => {
-    const r1: number = await ctx.runQuery(internal.public.calleeQuery, {
+    const r1: number = await ctx.runQuery(internal.index.calleeQuery, {
       x: 1,
       y: 2,
     });
-    const r2: number = await ctx.runMutation(internal.public.calleeMutation, {
+    const r2: number = await ctx.runMutation(internal.index.calleeMutation, {
       x: r1,
       y: 2,
     });
@@ -52,15 +52,15 @@ export const callerAction = action({
   args: {},
   returns: v.number(),
   handler: async (ctx, args) => {
-    const r1: number = await ctx.runQuery(internal.public.calleeQuery, {
+    const r1: number = await ctx.runQuery(internal.index.calleeQuery, {
       x: 1,
       y: 2,
     });
-    const r2: number = await ctx.runMutation(internal.public.calleeMutation, {
+    const r2: number = await ctx.runMutation(internal.index.calleeMutation, {
       x: r1,
       y: 2,
     });
-    const r3: number = await ctx.runAction(internal.public.calleeAction, {
+    const r3: number = await ctx.runAction(internal.index.calleeAction, {
       x: r2,
       y: 2,
     });
