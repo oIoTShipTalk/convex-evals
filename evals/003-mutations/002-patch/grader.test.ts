@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { client, compareSchema, compareFunctionSpec } from "../../../grader";
+import { responseClient, compareSchema, compareFunctionSpec } from "../../../grader";
 import { anyApi } from "convex/server";
 
 test("compare schema", async () => {
@@ -13,7 +13,7 @@ test("compare function spec", async () => {
 test("update user error", async () => {
   let error: any = undefined;
   try {
-    await client.mutation(anyApi.index.updateUserEmail, {
+    await responseClient.mutation(anyApi.index.updateUserEmail, {
       email: "jordan@convex.dev",
       name: "Jordan",
     });
