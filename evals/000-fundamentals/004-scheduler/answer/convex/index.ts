@@ -29,12 +29,12 @@ export const callerMutation = mutation({
   handler: async (ctx, args) => {
     const schedulerId = await ctx.scheduler.runAfter(
       0,
-      internal.public.logMutation,
+      internal.index.logMutation,
       { message: "Hello, world!" },
     );
     await ctx.scheduler.cancel(schedulerId);
 
-    await ctx.scheduler.runAt(Date.now() + 10000, internal.public.logAction, {
+    await ctx.scheduler.runAt(Date.now() + 10000, internal.index.logAction, {
       message: "Hello, world!",
     });
   },
@@ -46,12 +46,12 @@ export const callerAction = action({
   handler: async (ctx, args) => {
     await ctx.scheduler.runAfter(
       Math.random() * 10000,
-      internal.public.logAction,
+      internal.index.logAction,
       { message: "Hello, world!" },
     );
     const schedulerId = await ctx.scheduler.runAt(
       Date.now(),
-      internal.public.logMutation,
+      internal.index.logMutation,
       { message: "Hello, world!" },
     );
     await ctx.scheduler.cancel(schedulerId);
