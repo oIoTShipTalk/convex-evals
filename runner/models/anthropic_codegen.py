@@ -1,10 +1,10 @@
-from anthropic import Anthropic
 import os
 from bs4 import BeautifulSoup
 from typing import Union
 from . import ConvexCodegenModel, SYSTEM_PROMPT
 from .guidelines import Guideline, GuidelineSection, CONVEX_GUIDELINES
-
+from braintrust import wrap_openai
+from openai import OpenAI
 
 class AnthropicModel(ConvexCodegenModel):
     def __init__(self, model: str):
@@ -12,13 +12,16 @@ class AnthropicModel(ConvexCodegenModel):
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY is not set")
-        self.client = Anthropic(api_key=api_key)
+        # Use OpenAI's client + Braintrust's caching proxy.
+        self.client = wrap_openai(OpenAI(
+            base_url="https://api.braintrust.dev/v1/proxy",
+            api_key=api_key,
+        ))
         self.model = model
 
     def generate(self, prompt: str):
-        message = self.client.messages.create(
+        response = self.client.chat.completions.create(
             model=self.model,
-            system=SYSTEM_PROMPT,
             messages=[
                 {
                     "role": "user",
@@ -27,11 +30,10 @@ class AnthropicModel(ConvexCodegenModel):
                 {"role": "assistant", "content": [{"type": "text", "text": "<analysis>"}]},
             ],
             max_tokens=8192,
+            seed=1,
         )
-        if len(message.content) != 1 or message.content[0].type != "text":
-            raise ValueError("Message content is not text: %s" % message.content)
-
-        soup = BeautifulSoup("<analysis>" + message.content[0].text, "html.parser")
+        text = response.choices[0].message.content
+        soup = BeautifulSoup("<analysis>" + text, "html.parser")
         out = {}
 
         for file_tag in soup.find_all("file"):

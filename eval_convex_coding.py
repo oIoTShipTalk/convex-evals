@@ -8,6 +8,7 @@ import tempfile
 import shutil
 from dotenv import load_dotenv
 import os
+import re
 
 PROJECT = "Convex Coding"
 
@@ -24,11 +25,14 @@ max_concurrency = {
 }
 
 if os.getenv("OUTPUT_TEMPDIR") is not None:
-
     tempdir = os.getenv("OUTPUT_TEMPDIR")
 else:
     tempdir = tempfile.mkdtemp()
 print(f"Using tempdir: {tempdir}")
+
+test_filter = None
+if os.getenv("TEST_FILTER") is not None:
+    test_filter = re.compile(os.getenv("TEST_FILTER"))
 
 def convex_coding_evals(model):
     assert model in supported_models, f"Model {model} not supported"
@@ -42,6 +46,9 @@ def convex_coding_evals(model):
     ]
     data = []
     for category, name, eval_path in eval_paths:
+        if test_filter is not None and not test_filter.search(f"{category}/{name}"):
+            continue
+
         with open(f"{eval_path}/TASK.txt", "r") as f:
             task_description = f.read()
 
