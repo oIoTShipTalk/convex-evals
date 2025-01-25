@@ -80,10 +80,18 @@ def run_graders(directory: str):
         ]
         project_paths.sort()
         print(f"Running grader for {len(project_paths)} projects")
-    elif is_project_dir(directory) and os.path.basename(directory) == "answer":
-        evals_dir = os.path.dirname(directory)
-        name = os.path.basename(evals_dir)
-        category = os.path.basename(os.path.dirname(evals_dir))
+    elif is_project_dir(directory):
+        if os.path.basename(directory) == "answer":
+            evals_dir = os.path.dirname(directory)
+            name = os.path.basename(evals_dir)
+            category = os.path.basename(os.path.dirname(evals_dir))
+        else:
+            category = os.path.basename(os.path.dirname(directory))
+            name = os.path.basename(directory)
+
+        if not os.path.exists(f"evals/{category}/{name}"):
+            raise ValueError(f"Couldn't find evals for {category}/{name}")
+
         project_paths = [(category, name, directory)]
     else:
         raise ValueError(f"Couldn't interpret directory: {directory}")

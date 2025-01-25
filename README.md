@@ -7,6 +7,8 @@ LLM's output.
 
 ## Running the evaluations
 
+First, install dependencies:
+
 ```bash
 pip install pdm
 pdm install
@@ -16,43 +18,60 @@ bun install
 
 echo "ANTHROPIC_API_KEY=<your ANTHROPIC_API_KEY>" > .env
 echo "OPENAI_API_KEY=<your OPENAI_API_KEY>" >> .env
-
-pdm run python runner/main.py --model=claude-3-5-sonnet-latest --generate-concurrency=1
 ```
 
-You can also specify a test filter regex:
+Then, get a Braintrust API key from [the dashboard](https://www.braintrust.dev/app/Convex/settings/api-keys).
+You can run the `eval_convex_coding.py` evals with the `braintrust` CLI:
 
 ```bash
-pdm run python runner/main.py --model=claude-3-5-sonnet-latest --generate-concurrency=1 --test-filter='.*data_modeling.*'
+BRAINTRUST_API_KEY=<your BRAINTRUST_API_KEY> braintrust run runner/eval_convex_coding.py
 ```
 
-If you'd like to grade the evaluations again without regenerating them, run:
+It'll print out a URL for viewing the report online. You can specify a test filter regex via an environment variable:
 
 ```bash
-pdm run python runner/main.py --skip-generation
+TEST_FILTER='data_modeling' braintrust run runner/eval_convex_coding.py
 ```
 
-Here is the Next app for viewing the report:
+The test will also print out what temporary directory it's using for storing the generated files. You can override this
+with the `OUTPUT_TEMPDIR` environment variable.
 
 ```bash
-cd viewer
-bun install
-bun dev
+OUTPUT_TEMPDIR=/tmp/convex-codegen-evals braintrust run runner/eval_convex_coding.py
 ```
 
-## Creating a new evaluation
+## Rerunning grading
+
+After running the evals, you may want to dig into a particular test failure. You can use the `run_grader.py` script to grade the evaluations again without regenerating them:
 
 ```bash
-pdm run python create_eval.py <name> <category>
+pdm run python runner/run_grader.py /tmp/convex-codegen-evals
 ```
 
-For example, adding a new fundmentals eval for using HTTP actions and storage would be:
+You can also pass in a path to a specific evaluation.
 
 ```bash
-pdm run python create_eval.py http_actions_file_storage 000-fundamentals
+pdm run python runner/run_grader.py /tmp/convex-codegen-evals/output/claude-3-5-sonnet-latest/000-fundamentals/000-http_actions_file_storage
+```
+
+## Adding a new evaluation
+
+Use the `create_eval.py` script to create a new evaluation.
+
+```bash
+pdm run python runner/create_eval.py <category> <name>
 ```
 
 Note that test or category names cannot contain dashes.
+
+Then, fill out the `TASK.txt` and the human-curated answer within the `answer`
+directory. Fill out unit tests within the `grader.test.ts` file.
+
+Be sure that your answer passes tests:
+
+```bash
+pdm run runner/run_grader.py evals/<category>/<name>/answer
+```
 
 # Outstanding Evals
 
