@@ -8,17 +8,17 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get post comments returns empty array when no comments exist", async () => {
   const comments = await responseClient.query(anyApi.public.getPostComments, {
-    postId: "post1"
+    postId: "post1",
   });
   expect(comments).toEqual([]);
 });
@@ -38,7 +38,7 @@ test("get post comments returns correctly filtered and sorted comments", async (
 
   // Test basic filtering and sorting
   const comments = await responseClient.query(anyApi.public.getPostComments, {
-    postId: "post1"
+    postId: "post1",
   });
 
   // Should return all comments for post1
@@ -46,7 +46,9 @@ test("get post comments returns correctly filtered and sorted comments", async (
 
   // Should be sorted by creation time descending
   for (let i = 0; i < comments.length - 1; i++) {
-    expect(comments[i]._creationTime).toBeGreaterThan(comments[i + 1]._creationTime);
+    expect(comments[i]._creationTime).toBeGreaterThan(
+      comments[i + 1]._creationTime,
+    );
   }
 
   // Verify all fields are present and correct
@@ -65,10 +67,12 @@ test("get post comments returns correctly filtered and sorted comments", async (
   expect(comments[0].text).toBe("Fourth comment");
 
   // Test different post
-  const otherPostComments = await responseClient.query(anyApi.public.getPostComments, {
-    postId: "post2"
-  });
+  const otherPostComments = await responseClient.query(
+    anyApi.public.getPostComments,
+    {
+      postId: "post2",
+    },
+  );
   expect(otherPostComments).toHaveLength(1);
   expect(otherPostComments[0].text).toBe("Other post comment");
 });
-

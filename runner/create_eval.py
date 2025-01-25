@@ -14,7 +14,7 @@ category_dir = os.path.join(evals_dir, category)
 if not os.path.exists(category_dir):
     os.makedirs(category_dir)
 
-existing = [int(l.split("-")[0]) for l in os.listdir(category_dir)]
+existing = [int(existing_name.split("-")[0]) for existing_name in os.listdir(category_dir)]
 
 if existing:
     next_id = max(existing) + 1

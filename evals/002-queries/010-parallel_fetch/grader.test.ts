@@ -9,18 +9,21 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get author dashboard returns null when user not found", async () => {
-  const dashboard = await responseClient.query(anyApi.public.getAuthorDashboard, {
-    email: "nonexistent@example.com"
-  });
+  const dashboard = await responseClient.query(
+    anyApi.public.getAuthorDashboard,
+    {
+      email: "nonexistent@example.com",
+    },
+  );
   expect(dashboard).toBeNull();
 });
 
@@ -28,14 +31,14 @@ test("get author dashboard returns complete data", async () => {
   // Create test users
   await addDocuments(responseAdminClient, "users", [
     { name: "Alice", email: "alice@example.com" },
-    { name: "Bob", email: "bob@example.com" }
+    { name: "Bob", email: "bob@example.com" },
   ]);
   const users = await listTable(responseAdminClient, "users");
   const [user1, user2] = users; // listTable returns in chronological order
 
   // Create user preferences
   await addDocuments(responseAdminClient, "userPreferences", [
-    { userId: user1._id, theme: "dark", notifications: true }
+    { userId: user1._id, theme: "dark", notifications: true },
   ]);
 
   const posts = [];
@@ -43,12 +46,12 @@ test("get author dashboard returns complete data", async () => {
     posts.push({
       authorId: user1._id,
       title: `Post ${i + 1}`,
-      content: `Content for post ${i + 1}`
+      content: `Content for post ${i + 1}`,
     });
   }
   await addDocuments(responseAdminClient, "posts", posts);
   const allPosts = await listTable(responseAdminClient, "posts");
-  const postIds = allPosts.map(p => p._id);
+  const postIds = allPosts.map((p) => p._id);
 
   // Create reactions
   const reactions = [
@@ -62,21 +65,24 @@ test("get author dashboard returns complete data", async () => {
     { postId: postIds[18], userId: user1._id, type: "celebrate" },
 
     // Reactions for an older post
-    { postId: postIds[0], userId: user2._id, type: "like" }
+    { postId: postIds[0], userId: user2._id, type: "like" },
   ];
   await addDocuments(responseAdminClient, "reactions", reactions);
 
   // Get dashboard for Alice
-  const dashboard = await responseClient.query(anyApi.public.getAuthorDashboard, {
-    email: "alice@example.com"
-  });
+  const dashboard = await responseClient.query(
+    anyApi.public.getAuthorDashboard,
+    {
+      email: "alice@example.com",
+    },
+  );
 
   // Verify user data
   expect(dashboard.user).toEqual({
     name: "Alice",
     email: "alice@example.com",
     theme: "dark",
-    notifications: true
+    notifications: true,
   });
 
   // Verify posts
@@ -87,7 +93,7 @@ test("get author dashboard returns complete data", async () => {
   expect(dashboard.posts[0].reactionCounts).toEqual({
     like: 2,
     heart: 1,
-    celebrate: 0
+    celebrate: 0,
   });
 
   // Second most recent post
@@ -95,7 +101,7 @@ test("get author dashboard returns complete data", async () => {
   expect(dashboard.posts[1].reactionCounts).toEqual({
     like: 0,
     heart: 0,
-    celebrate: 2
+    celebrate: 2,
   });
 
   // Verify all posts have reaction counts
@@ -107,4 +113,3 @@ test("get author dashboard returns complete data", async () => {
     expect(post.reactionCounts).toHaveProperty("celebrate");
   }
 });
-

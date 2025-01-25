@@ -7,12 +7,12 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("empty public query", async () => {
@@ -48,7 +48,10 @@ test("empty public query", async () => {
 });
 
 test("empty public mutation", async () => {
-  const result = await responseClient.mutation(anyApi.index.emptyPublicMutation, {});
+  const result = await responseClient.mutation(
+    anyApi.index.emptyPublicMutation,
+    {},
+  );
   expect(result).toBe(null);
 
   let error: any = undefined;
@@ -80,7 +83,10 @@ test("empty public mutation", async () => {
 });
 
 test("empty public action", async () => {
-  const result = await responseClient.action(anyApi.index.emptyPublicAction, {});
+  const result = await responseClient.action(
+    anyApi.index.emptyPublicAction,
+    {},
+  );
   expect(result).toBe(null);
 
   let error: any = undefined;
@@ -121,7 +127,10 @@ test("empty private query", async () => {
   expect(error).toBeDefined();
   expect(error.toString()).toContain("Could not find public function");
 
-  const result = await responseAdminClient.query(anyApi.index.emptyPrivateQuery, {});
+  const result = await responseAdminClient.query(
+    anyApi.index.emptyPrivateQuery,
+    {},
+  );
   expect(result).toBe(null);
 });
 
@@ -152,6 +161,9 @@ test("empty private action", async () => {
   expect(error).toBeDefined();
   expect(error.toString()).toContain("Could not find public function");
 
-  const result = await responseAdminClient.action(anyApi.index.emptyPrivateAction, {});
+  const result = await responseAdminClient.action(
+    anyApi.index.emptyPrivateAction,
+    {},
+  );
   expect(result).toBe(null);
 });

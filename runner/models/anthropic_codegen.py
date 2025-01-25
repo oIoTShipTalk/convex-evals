@@ -6,6 +6,7 @@ from .guidelines import Guideline, GuidelineSection, CONVEX_GUIDELINES
 from braintrust import wrap_openai
 from openai import OpenAI
 
+
 class AnthropicModel(ConvexCodegenModel):
     def __init__(self, model: str):
         assert model in ["claude-3-5-sonnet-latest"]
@@ -13,16 +14,22 @@ class AnthropicModel(ConvexCodegenModel):
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY is not set")
         # Use OpenAI's client + Braintrust's caching proxy.
-        self.client = wrap_openai(OpenAI(
-            base_url="https://api.braintrust.dev/v1/proxy",
-            api_key=api_key,
-        ))
+        self.client = wrap_openai(
+            OpenAI(
+                base_url="https://api.braintrust.dev/v1/proxy",
+                api_key=api_key,
+            )
+        )
         self.model = model
 
     def generate(self, prompt: str):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT,
+                },
                 {
                     "role": "user",
                     "content": [{"type": "text", "text": "".join(render_prompt(prompt))}],
@@ -95,21 +102,22 @@ def render_examples():
         file_paths.sort(key=lambda x: (x.count("/"), x))
 
         yield f'<example name="{example}">\n'
-        yield f"  <task>\n"
+        yield "  <task>\n"
         yield f"    {task_description}\n"
-        yield f"  </task>\n"
-        yield f"  <response>\n"
-        yield f"    <analysis>\n"
+        yield "  </task>\n"
+        yield "  <response>\n"
+        yield "    <analysis>\n"
         yield f"      {analysis}\n"
-        yield f"    </analysis>\n"
+        yield "    </analysis>\n"
         for file_path in file_paths:
             rel_path = os.path.relpath(file_path, example_path)
             file_content = open(file_path, "r").read().strip()
             yield f'    <file path="{rel_path}">\n'
             yield f"      {file_content}\n"
-            yield f"    </file>\n"
-        yield f"  </response>\n"
-        yield f"</example>\n"
+            yield "    </file>\n"
+        yield "  </response>\n"
+        yield "</example>\n"
+
     yield "</examples>\n"
 
 

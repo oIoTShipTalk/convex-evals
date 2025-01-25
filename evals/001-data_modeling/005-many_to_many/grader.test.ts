@@ -7,6 +7,6 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });

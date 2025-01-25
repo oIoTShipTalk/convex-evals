@@ -8,13 +8,12 @@ import threading
 import functools
 import contextlib
 import zipfile
-import json
-from runner.errors import VerificationError
 
 port_lock = threading.Lock()
 
 instance_name = "carnitas"
 instance_secret = "4361726e697461732c206c69746572616c6c79206d65616e696e6720226c6974"
+
 admin_key = "0135d8598650f8f5cb0f30c34ec2e2bb62793bc28717c8eb6fb577996d50be5f4281b59181095065c5d0f86a2c31ddbe9b597ec62b47ded69782cd"
 
 
@@ -59,58 +58,6 @@ def convex_backend(backend_dir: str):
         }
     finally:
         convex_process.terminate()
-
-
-def deploy(backend: dict, project_dir: str, direct_output: bool = False):
-    subprocess.check_call(
-        [
-            "bunx",
-            "convex",
-            "dev",
-            "--once",
-            "--admin-key",
-            admin_key,
-            "--url",
-            f"http://localhost:{backend['port']}",
-        ],
-        cwd=project_dir,
-    )
-    if not direct_output:
-        print("Deploy OK!")
-
-
-def run_tests(backend: dict, answer_backend: dict, test_file: str, direct_output: bool = False):
-    env = dict(
-        os.environ,
-        CONVEX_PORT=str(backend["port"]),
-        CONVEX_ANSWER_PORT=str(answer_backend["port"]),
-    )
-    if direct_output:
-        subprocess.check_call(
-            ["bunx", "vitest", "run", test_file],
-            env=env,
-        )
-    else:
-        done = subprocess.run(
-            [
-                "bunx",
-                "vitest",
-                "run",
-                test_file,
-                "--reporter",
-                "json",
-            ],
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            encoding="utf-8",
-        )
-        if done.returncode != 0:
-            _, _, report = done.stdout.partition("{")
-            report, _, _ = report.rpartition("}")
-            report = json.loads("{" + report + "}")
-            raise VerificationError("Tests failed", report)
-        print("Tests OK!")
 
 
 def health_check(port: int):

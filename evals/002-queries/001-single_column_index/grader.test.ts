@@ -8,17 +8,17 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get user by email returns null for non-existent user", async () => {
   const user = await responseClient.query(anyApi.public.getUserByEmail, {
-    email: "nonexistent@example.com"
+    email: "nonexistent@example.com",
   });
   expect(user).toBeNull();
 });
@@ -35,7 +35,7 @@ test("get user by email returns correct user", async () => {
   // Test finding each user
   for (const testUser of testUsers) {
     const user = await responseClient.query(anyApi.public.getUserByEmail, {
-      email: testUser.email
+      email: testUser.email,
     });
 
     // Verify user is found
@@ -63,11 +63,10 @@ test("get user by email throws error for duplicate emails", async () => {
   let error: any = undefined;
   try {
     await responseClient.query(anyApi.public.getUserByEmail, {
-      email: "duplicate@example.com"
+      email: "duplicate@example.com",
     });
   } catch (e) {
     error = e;
   }
   expect(error).toBeDefined();
 });
-

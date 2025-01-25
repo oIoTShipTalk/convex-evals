@@ -8,21 +8,24 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get sensor readings in range returns empty array when no readings exist", async () => {
   const now = Math.floor(Date.now() / 1000);
-  const readings = await responseClient.query(anyApi.public.getSensorReadingsInRange, {
-    sensorId: "sensor1",
-    startTime: now - 3600, // 1 hour ago
-    endTime: now
-  });
+  const readings = await responseClient.query(
+    anyApi.public.getSensorReadingsInRange,
+    {
+      sensorId: "sensor1",
+      startTime: now - 3600, // 1 hour ago
+      endTime: now,
+    },
+  );
   expect(readings).toEqual([]);
 });
 
@@ -47,11 +50,14 @@ test("get sensor readings in range returns correctly filtered and sorted reading
   await addDocuments(responseAdminClient, "temperatures", testReadings);
 
   // Test basic range query
-  const readings = await responseClient.query(anyApi.public.getSensorReadingsInRange, {
-    sensorId: "sensor1",
-    startTime: baseTime,
-    endTime: baseTime + 1800
-  });
+  const readings = await responseClient.query(
+    anyApi.public.getSensorReadingsInRange,
+    {
+      sensorId: "sensor1",
+      startTime: baseTime,
+      endTime: baseTime + 1800,
+    },
+  );
 
   // Should return readings within range
   expect(readings).toHaveLength(4);
@@ -73,21 +79,26 @@ test("get sensor readings in range returns correctly filtered and sorted reading
   }
 
   // Test different sensor
-  const sensor2Readings = await responseClient.query(anyApi.public.getSensorReadingsInRange, {
-    sensorId: "sensor2",
-    startTime: baseTime,
-    endTime: baseTime + 1800
-  });
+  const sensor2Readings = await responseClient.query(
+    anyApi.public.getSensorReadingsInRange,
+    {
+      sensorId: "sensor2",
+      startTime: baseTime,
+      endTime: baseTime + 1800,
+    },
+  );
   expect(sensor2Readings).toHaveLength(1);
   expect(sensor2Readings[0].value).toBe(25.0);
 
   // Test smaller time range
-  const shortRangeReadings = await responseClient.query(anyApi.public.getSensorReadingsInRange, {
-    sensorId: "sensor1",
-    startTime: baseTime + 500,
-    endTime: baseTime + 700
-  });
+  const shortRangeReadings = await responseClient.query(
+    anyApi.public.getSensorReadingsInRange,
+    {
+      sensorId: "sensor1",
+      startTime: baseTime + 500,
+      endTime: baseTime + 700,
+    },
+  );
   expect(shortRangeReadings).toHaveLength(1);
   expect(shortRangeReadings[0].value).toBe(21.0);
 });
-

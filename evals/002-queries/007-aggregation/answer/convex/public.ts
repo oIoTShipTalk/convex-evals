@@ -26,9 +26,9 @@ export const getCustomerStats = query({
       totalOrders: stats.totalOrders,
       totalItems: stats.totalItems,
       totalSpent: Number(stats.totalSpent.toFixed(2)),
-      averageOrderValue: stats.totalOrders && Number(
-        (stats.totalSpent / stats.totalOrders).toFixed(2),
-      ),
+      averageOrderValue:
+        stats.totalOrders &&
+        Number((stats.totalSpent / stats.totalOrders).toFixed(2)),
     };
   },
 });

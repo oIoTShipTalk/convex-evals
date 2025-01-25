@@ -8,23 +8,23 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get customer stats returns zeros when no orders exist", async () => {
   const stats = await responseClient.query(anyApi.public.getCustomerStats, {
-    customerId: "customer1"
+    customerId: "customer1",
   });
   expect(stats).toEqual({
     totalOrders: 0,
     totalItems: 0,
-    totalSpent: 0.00,
-    averageOrderValue: 0.00
+    totalSpent: 0.0,
+    averageOrderValue: 0.0,
   });
 });
 
@@ -32,19 +32,42 @@ test("get customer stats calculates correct statistics", async () => {
   // Load test data with multiple orders
   const testOrders = [
     // Customer 1 orders
-    { customerId: "customer1", productId: "product1", quantity: 2, pricePerUnit: 10.99 },
-    { customerId: "customer1", productId: "product2", quantity: 1, pricePerUnit: 25.50 },
-    { customerId: "customer1", productId: "product1", quantity: 3, pricePerUnit: 10.99 },
+    {
+      customerId: "customer1",
+      productId: "product1",
+      quantity: 2,
+      pricePerUnit: 10.99,
+    },
+    {
+      customerId: "customer1",
+      productId: "product2",
+      quantity: 1,
+      pricePerUnit: 25.5,
+    },
+    {
+      customerId: "customer1",
+      productId: "product1",
+      quantity: 3,
+      pricePerUnit: 10.99,
+    },
 
     // Customer 2 orders
-    { customerId: "customer2", productId: "product1", quantity: 1, pricePerUnit: 10.99 }
+    {
+      customerId: "customer2",
+      productId: "product1",
+      quantity: 1,
+      pricePerUnit: 10.99,
+    },
   ];
   await addDocuments(responseAdminClient, "orders", testOrders);
 
   // Test stats for customer1
-  const customer1Stats = await responseClient.query(anyApi.public.getCustomerStats, {
-    customerId: "customer1"
-  });
+  const customer1Stats = await responseClient.query(
+    anyApi.public.getCustomerStats,
+    {
+      customerId: "customer1",
+    },
+  );
 
   // Verify calculations
   // Order 1: 2 * 10.99 = 21.98
@@ -57,13 +80,16 @@ test("get customer stats calculates correct statistics", async () => {
     totalOrders: 3,
     totalItems: 6,
     totalSpent: 80.45,
-    averageOrderValue: 26.82
+    averageOrderValue: 26.82,
   });
 
   // Test stats for customer2
-  const customer2Stats = await responseClient.query(anyApi.public.getCustomerStats, {
-    customerId: "customer2"
-  });
+  const customer2Stats = await responseClient.query(
+    anyApi.public.getCustomerStats,
+    {
+      customerId: "customer2",
+    },
+  );
 
   // Verify calculations
   // Order 1: 1 * 10.99 = 10.99
@@ -71,20 +97,30 @@ test("get customer stats calculates correct statistics", async () => {
     totalOrders: 1,
     totalItems: 1,
     totalSpent: 10.99,
-    averageOrderValue: 10.99
+    averageOrderValue: 10.99,
   });
 });
 
 test("get customer stats handles fractional numbers correctly", async () => {
   // Load test data with fractional quantities and prices
   const testOrders = [
-    { customerId: "customer3", productId: "product1", quantity: 1.5, pricePerUnit: 10.33 },
-    { customerId: "customer3", productId: "product2", quantity: 2.25, pricePerUnit: 15.67 }
+    {
+      customerId: "customer3",
+      productId: "product1",
+      quantity: 1.5,
+      pricePerUnit: 10.33,
+    },
+    {
+      customerId: "customer3",
+      productId: "product2",
+      quantity: 2.25,
+      pricePerUnit: 15.67,
+    },
   ];
   await addDocuments(responseAdminClient, "orders", testOrders);
 
   const stats = await responseClient.query(anyApi.public.getCustomerStats, {
-    customerId: "customer3"
+    customerId: "customer3",
   });
 
   // Verify calculations with proper rounding
@@ -97,7 +133,6 @@ test("get customer stats handles fractional numbers correctly", async () => {
     totalOrders: 2,
     totalItems: 3.75,
     totalSpent: 50.75,
-    averageOrderValue: 25.38
+    averageOrderValue: 25.38,
   });
 });
-

@@ -5,9 +5,14 @@ format:
     just format-python
     just format-js
 
-# Format Python code with Black
+lint:
+    just lint-python
+
 format-python:
     pdm run black .
+
+lint-python:
+    pdm run ruff check .
 
 format-js:
     bunx prettier --write .

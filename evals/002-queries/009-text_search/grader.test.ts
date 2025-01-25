@@ -8,18 +8,18 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("search articles returns empty array when no matches exist", async () => {
   const articles = await responseClient.query(anyApi.public.searchArticles, {
     searchTerm: "nonexistent",
-    author: "alice"
+    author: "alice",
   });
   expect(articles).toEqual([]);
 });
@@ -29,39 +29,42 @@ test("search articles finds and formats matches correctly", async () => {
   const testArticles = [
     {
       title: "JavaScript Basics",
-      content: "JavaScript is a programming language commonly used in web development. It allows you to create interactive websites.",
+      content:
+        "JavaScript is a programming language commonly used in web development. It allows you to create interactive websites.",
       author: "alice",
       tags: ["programming", "web"],
-      isPublished: true
+      isPublished: true,
     },
     {
       title: "Advanced JavaScript",
-      content: "Learn about advanced JavaScript concepts like closures, promises, and async/await. Master modern JavaScript programming.",
+      content:
+        "Learn about advanced JavaScript concepts like closures, promises, and async/await. Master modern JavaScript programming.",
       author: "alice",
       tags: ["programming", "advanced"],
-      isPublished: true
+      isPublished: true,
     },
     {
       title: "Unpublished JavaScript",
       content: "This is a draft about JavaScript programming.",
       author: "alice",
       tags: ["programming"],
-      isPublished: false
+      isPublished: false,
     },
     {
       title: "Python Basics",
-      content: "Python is another programming language. It's known for its simplicity and readability.",
+      content:
+        "Python is another programming language. It's known for its simplicity and readability.",
       author: "bob",
       tags: ["programming", "python"],
-      isPublished: true
-    }
+      isPublished: true,
+    },
   ];
   await addDocuments(responseAdminClient, "articles", testArticles);
 
   // Test search by alice for "javascript"
   const jsArticles = await responseClient.query(anyApi.public.searchArticles, {
     searchTerm: "javascript",
-    author: "alice"
+    author: "alice",
   });
 
   // Should find two published articles
@@ -79,7 +82,7 @@ test("search articles finds and formats matches correctly", async () => {
   // Test search by bob
   const bobArticles = await responseClient.query(anyApi.public.searchArticles, {
     searchTerm: "programming",
-    author: "bob"
+    author: "bob",
   });
 
   expect(bobArticles).toHaveLength(1);
@@ -88,21 +91,24 @@ test("search articles finds and formats matches correctly", async () => {
 
 test("search articles handles long content correctly", async () => {
   // Create an article with long content
-  const longContent = "This is a very long article content that goes beyond 100 characters. ".repeat(10);
+  const longContent =
+    "This is a very long article content that goes beyond 100 characters. ".repeat(
+      10,
+    );
   const testArticles = [
     {
       title: "Long Article",
       content: longContent,
       author: "alice",
       tags: ["long"],
-      isPublished: true
-    }
+      isPublished: true,
+    },
   ];
   await addDocuments(responseAdminClient, "articles", testArticles);
 
   const articles = await responseClient.query(anyApi.public.searchArticles, {
     searchTerm: "long article",
-    author: "alice"
+    author: "alice",
   });
 
   expect(articles).toHaveLength(1);

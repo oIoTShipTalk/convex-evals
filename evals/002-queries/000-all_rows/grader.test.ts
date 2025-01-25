@@ -8,12 +8,12 @@ import {
 } from "../../../grader";
 import { anyApi } from "convex/server";
 
-test("compare schema", async () => {
-  await compareSchema();
+test("compare schema", async ({ skip }) => {
+  await compareSchema(skip);
 });
 
-test("compare function spec", async () => {
-  await compareFunctionSpec();
+test("compare function spec", async ({ skip }) => {
+  await compareFunctionSpec(skip);
 });
 
 test("get all products returns empty list when no products exist", async () => {
@@ -48,9 +48,20 @@ test("get all products returns all products in the table", async () => {
 
   // Verify the data matches our test data
   const sortedProducts = products
-    .map((p: { name: string; price: number; inStock: boolean; _id: string; _creationTime: number }) =>
-      ({ name: p.name, price: p.price, inStock: p.inStock }))
-    .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
-  const sortedTestProducts = [...testProducts].sort((a, b) => a.name.localeCompare(b.name));
+    .map(
+      (p: {
+        name: string;
+        price: number;
+        inStock: boolean;
+        _id: string;
+        _creationTime: number;
+      }) => ({ name: p.name, price: p.price, inStock: p.inStock }),
+    )
+    .sort((a: { name: string }, b: { name: string }) =>
+      a.name.localeCompare(b.name),
+    );
+  const sortedTestProducts = [...testProducts].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
   expect(sortedProducts).toEqual(sortedTestProducts);
 });
