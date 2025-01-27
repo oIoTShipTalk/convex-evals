@@ -8,14 +8,15 @@ name = sys.argv[2]
 evals_dir = "evals"
 categories = os.listdir(evals_dir)
 
-if category not in categories:
+category_by_name = {category.split("-")[1]: category for category in categories}
+next_category_number = max(int(category.split("-")[0]) for category in categories) + 1
+
+if category not in category_by_name:
     print(f"Creating new category {category}")
-    os.makedirs(os.path.join(evals_dir, category))
-
-category_dir = os.path.join(evals_dir, category)
-
-if not os.path.exists(category_dir):
+    category_dir = os.path.join(evals_dir, f"{next_category_number:03d}-{category}")
     os.makedirs(category_dir)
+else:
+    category_dir = os.path.join(evals_dir, category_by_name[category])
 
 existing = [int(existing_name.split("-")[0]) for existing_name in os.listdir(category_dir)]
 
