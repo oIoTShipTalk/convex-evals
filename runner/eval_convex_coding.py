@@ -13,7 +13,7 @@ load_dotenv()
 
 logger = init_logger(project=PROJECT)
 
-supported_models = ["gpt-4o", "claude-3-5-sonnet-latest", "o1", "o1-mini"]
+supported_models = ["gpt-4o", "claude-3-5-sonnet-latest", "o1", "o1-mini", "deepseek-ai/DeepSeek-R1"]
 anthropic_concurrency = int(os.getenv("ANTHROPIC_CONCURRENCY", "2"))
 openai_concurrency = int(os.getenv("OPENAI_CONCURRENCY", "4"))
 max_concurrency = {
@@ -21,6 +21,8 @@ max_concurrency = {
     "gpt-4o": openai_concurrency,
     "o1": openai_concurrency,
     "o1-mini": openai_concurrency,
+    "deepseek-ai/DeepSeek-V3": openai_concurrency,
+    "deepseek-ai/DeepSeek-R1": openai_concurrency,
 }
 
 if os.getenv("OUTPUT_TEMPDIR") is not None:
@@ -90,12 +92,27 @@ def convex_coding_evals(model):
 
 def convex_coding_task(model, input):
     if model.startswith("claude-3-5-sonnet"):
-        model_impl = AnthropicModel(model)
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY is not set")
+        model_impl = AnthropicModel(api_key, model)
     elif model.startswith("gpt") or model.startswith("o1"):
-        model_impl = OpenAIModel(model)
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY is not set")
+        model_impl = OpenAIModel(api_key, model)
+    elif model.startswith("deepseek-ai"):
+        api_key = os.getenv("TOGETHER_API_KEY")
+        if not api_key:
+            raise ValueError("TOGETHER_API_KEY is not set")
+        model_impl = OpenAIModel(api_key, model)
     else:
         raise ValueError(f"Unknown model: {model}")
     return model_impl.generate(input)
 
 
 convex_coding_evals("claude-3-5-sonnet-latest")
+# convex_coding_evals("gpt-4o")
+# convex_coding_evals("o1")
+# convex_coding_evals("o1-mini")
+# convex_coding_evals("deepseek-ai/DeepSeek-R1")

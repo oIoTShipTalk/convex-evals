@@ -8,11 +8,8 @@ from openai import OpenAI
 
 
 class AnthropicModel(ConvexCodegenModel):
-    def __init__(self, model: str):
+    def __init__(self, api_key: str, model: str):
         assert model in ["claude-3-5-sonnet-latest"]
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY is not set")
         # Use OpenAI's client + Braintrust's caching proxy.
         self.client = wrap_openai(
             OpenAI(
