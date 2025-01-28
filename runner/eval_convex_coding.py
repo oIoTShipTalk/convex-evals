@@ -13,7 +13,7 @@ load_dotenv()
 
 logger = init_logger(project=PROJECT)
 
-supported_models = ["gpt-4o", "claude-3-5-sonnet-latest", "o1", "o1-mini", "deepseek-ai/DeepSeek-R1"]
+supported_models = ["gpt-4o", "claude-3-5-sonnet-latest", "o1", "o1-mini", "deepseek-ai/DeepSeek-R1", "deepseek-ai/DeepSeek-V3"]
 anthropic_concurrency = int(os.getenv("ANTHROPIC_CONCURRENCY", "2"))
 openai_concurrency = int(os.getenv("OPENAI_CONCURRENCY", "4"))
 max_concurrency = {
@@ -112,6 +112,8 @@ def convex_coding_task(model, input):
 
 
 convex_coding_evals("claude-3-5-sonnet-latest")
+
+# Comment these out to run more models.
 # convex_coding_evals("gpt-4o")
 # convex_coding_evals("o1")
 # convex_coding_evals("o1-mini")

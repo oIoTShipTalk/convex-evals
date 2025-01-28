@@ -20,19 +20,8 @@ class OpenAIModel(ConvexCodegenModel):
     def __init__(self, api_key: str, model: str):
         assert model in requires_chain_of_thought
         self.chain_of_thought = requires_chain_of_thought[model]
-
-        # TODO: It seems like braintrust's proxy doesn't work with together.ai.
-        if model.startswith("deepseek-ai"):
-            url = "https://api.together.xyz/v1"
-            self.client = openai.OpenAI(base_url=url, api_key=api_key)
-        else:
-            url = "https://api.braintrust.dev/v1/proxy"
-            self.client = wrap_openai(
-                openai.OpenAI(
-                    base_url=url,
-                    api_key=api_key,
-                )
-            )
+        url = "https://api.braintrust.dev/v1/proxy"
+        self.client = wrap_openai(openai.OpenAI(base_url=url, api_key=api_key))
         self.model = model
 
     def generate(self, prompt: str):
