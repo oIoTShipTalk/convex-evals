@@ -15,7 +15,7 @@ export default defineSchema({
 ```
 
 Write a query named `getMonthlySalesByCategory` in `convex/public.ts` that:
-- Takes a region and month (YYYY-MM) as arguments
+- Takes a region and date (YYYY-MM) as arguments
 - Returns an array of objects, each containing:
   * category: string
   * totalSales: number (sum of amounts)

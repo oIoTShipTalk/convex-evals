@@ -4,7 +4,7 @@ import { query } from "./_generated/server";
 export const getMonthlySalesByCategory = query({
   args: {
     region: v.string(),
-    month: v.string(),
+    date: v.string(),
   },
   returns: v.array(
     v.object({
@@ -18,7 +18,7 @@ export const getMonthlySalesByCategory = query({
     const sales = await ctx.db
       .query("sales")
       .withIndex("by_region_date", (q) =>
-        q.eq("region", args.region).eq("date", args.month),
+        q.eq("region", args.region).eq("date", args.date),
       )
       .collect();
 

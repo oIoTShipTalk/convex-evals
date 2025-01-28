@@ -18,10 +18,10 @@ export default defineSchema({
 ```
 
 Write a query named `searchArticles` in `convex/public.ts` that:
-- Takes a searchTerm and author as arguments
+- Takes a searchTerm (string) and author (string) as arguments
 - Searches for all published articles that match the search term
 - Returns the top 10 matching articles with:
   * title
   * author
-  * preview (first 100 characters of content)
+  * preview (first 100 characters of content with no extra characters)
   * tags

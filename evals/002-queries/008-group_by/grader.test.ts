@@ -21,7 +21,7 @@ test("get monthly sales by category returns empty array when no sales exist", as
     anyApi.public.getMonthlySalesByCategory,
     {
       region: "west",
-      month: "2024-01",
+      date: "2024-01",
     },
   );
   expect(stats).toEqual([]);
@@ -92,7 +92,7 @@ test("get monthly sales by category groups and sorts correctly", async () => {
     anyApi.public.getMonthlySalesByCategory,
     {
       region: "west",
-      month: "2024-01",
+      date: "2024-01",
     },
   );
 
@@ -123,7 +123,7 @@ test("get monthly sales by category groups and sorts correctly", async () => {
     anyApi.public.getMonthlySalesByCategory,
     {
       region: "west",
-      month: "2024-02",
+      date: "2024-02",
     },
   );
 
@@ -141,7 +141,7 @@ test("get monthly sales by category groups and sorts correctly", async () => {
     anyApi.public.getMonthlySalesByCategory,
     {
       region: "east",
-      month: "2024-01",
+      date: "2024-01",
     },
   );
 
@@ -186,7 +186,7 @@ test("get monthly sales by category handles fractional amounts", async () => {
     anyApi.public.getMonthlySalesByCategory,
     {
       region: "north",
-      month: "2024-01",
+      date: "2024-01",
     },
   );
 

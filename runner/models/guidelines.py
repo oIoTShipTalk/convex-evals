@@ -178,6 +178,9 @@ CONVEX_GUIDELINES = GuidelineSection(
             [
                 Guideline("Always define your schema in `convex/schema.ts`."),
                 Guideline("Always import the schema definition functions from `convex/server`:"),
+                Guideline(
+                    "System fields are automatically added to all documents and are prefixed with an underscore."
+                ),
             ],
         ),
         GuidelineSection(
@@ -210,6 +213,9 @@ CONVEX_GUIDELINES = GuidelineSection(
                 ),
                 Guideline(
                     "Convex queries do NOT support `.delete()`. Instead, `.collect()` the results, iterate over them, and call `ctx.db.delete(row._id)` on each result."
+                ),
+                Guideline(
+                    "Use `.unique()` to get a single document from a query. This method will throw an error if there are multiple documents that match the query."
                 ),
                 GuidelineSection(
                     "ordering",

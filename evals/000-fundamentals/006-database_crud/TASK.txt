@@ -23,7 +23,7 @@ Implement the following functions in `convex/public.ts`:
 
 2. Create a query `readLocation` that:
    - Takes a location ID as an argument
-   - Returns either null or an object containing the location's name, latitude, and longitude
+   - Returns either null or the object containing the location's name, latitude, longitude, and its system fields
    - Use proper union typing for the return value
 
 3. Create a mutation `updateLocation` that:
