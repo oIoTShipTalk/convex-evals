@@ -29,7 +29,7 @@ jobs:
 
       - name: Build Release Files
         run: |
-          python build_release.py
+          pdm run python build_release.py
 
       - name: Create Release
         id: create_release
