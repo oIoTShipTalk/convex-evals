@@ -152,11 +152,8 @@ def render_convex_guidelines(node: Union[GuidelineSection, Guideline], indentati
 
 
 def build_release_guidelines() -> str:
-    return (
-        "<convex_guidelines>\n" +
+    return (      
         "".join(render_convex_guidelines(CONVEX_GUIDELINES)) +
-        "</convex_guidelines>\n\n" +
-        "<convex_examples>\n" +
-        "".join(render_examples()) +
-        "</convex_examples>\n"
+        "\n\n" +  
+        "".join(render_examples())
     )

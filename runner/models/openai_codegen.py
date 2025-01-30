@@ -176,9 +176,7 @@ def render_guidelines(node: Union[GuidelineSection, Guideline], header="#"):
         yield "\n"
 
 def build_release_guidelines() -> str:
-    return (
-        "# Convex Guidelines\n\n" +
-        "".join(render_guidelines(CONVEX_GUIDELINES)) +
-        "\n# Convex Examples\n\n" +
+    return (    
+        "".join(render_guidelines(CONVEX_GUIDELINES)) +    
         "".join(render_examples())
     )
