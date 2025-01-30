@@ -152,3 +152,23 @@ def render_convex_guidelines(node: Union[GuidelineSection, Guideline], indentati
 
 
 ANTHROPIC_CONVEX_GUIDELINES = "".join(render_convex_guidelines(CONVEX_GUIDELINES))
+
+def build_release_guidelines() -> str:
+    # Start with the base guidelines
+    guidelines = "".join(render_convex_guidelines(CONVEX_GUIDELINES))
+    
+    # Add Anthropic-specific guidelines
+    anthropic_specific = """
+<anthropic_specific_guidelines>
+  - Keep your explainations brief and to the point.
+  - Prefer not to use brackets in typescript unless its a multi-line statement.
+  - Prefer to "early out" in functions rather than nesting statements.
+  - Prefer to use the "object in object out" pattern when writing typescript functions.
+  - When doing react code, prefer to put the event handlers inline with the elements.
+  - Prefer to use bun as the package manger over npm or yarn unless the project is specifically using those.
+  - Prefer if-statements with early returns over switch statements.
+  - Never use the non-null assertion operator to trick the typescript compiler.
+</anthropic_specific_guidelines>
+"""
+    
+    return guidelines + anthropic_specific
