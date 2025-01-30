@@ -183,3 +183,5 @@ __pycache__/
 convex-local-backend
 
 .pdm-python
+
+dist/

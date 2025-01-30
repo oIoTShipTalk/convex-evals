@@ -1,0 +1,43 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Your build steps here that generate files in temp directory
+      # For example:
+      # - name: Build
+      #   run: |
+      #     npm ci
+      #     npm run build
+
+      - name: Create Release
+        id: create_release
+        uses: rymndhng/release-on-push-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          bump_version_scheme: minor
+          tag_prefix: v
+          release_name: "Release <RELEASE_VERSION>"
+
+      - name: Upload Release Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in dist/*; do
+            if [ -f "$file" ]; then
+              gh release upload "${{ steps.create_release.outputs.tag_name }}" "$file" --clobber
+            fi
+          done
